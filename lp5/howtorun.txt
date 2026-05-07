@@ -1,0 +1,39 @@
+===============================
+RUN PROGRAMS IN LINUX TERMINAL
+==============================
+
+> > 1️⃣ Normal C++ Execution
+
+g++ filename.cpp -o output
+./output
+
+> > 2️⃣ Parallel Execution using OpenMP
+
+g++ filename.cpp -fopenmp -o output
+./output
+
+# (Optional) Set number of threads
+
+export OMP_NUM_THREADS=4
+
+> > 3️⃣ Execution using CUDA
+
+# Step 1: Check CUDA
+
+nvcc --version
+
+# If version shows → OK
+
+# If not → install CUDA toolkit
+
+# Step 2: Save file (IMPORTANT: .cu extension)
+
+reduce.cu
+
+# Step 3: Compile (NOT g++)
+
+nvcc reduce.cu -o reduce
+
+# Step 4: Run
+
+./reduce

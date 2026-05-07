@@ -1,0 +1,91 @@
+# ================================
+# 1. Import Required Libraries
+# ================================
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+from yellowbrick.classifier import ConfusionMatrix
+
+
+# ================================
+# 2. Load Dataset
+# ================================
+# Make sure file is in same folder
+dataset = pd.read_csv("2_letter_recognition.data", header=None)
+
+print("Dataset Shape:", dataset.shape)
+print(dataset.head())
+
+
+# ================================
+# 3. Separate Features and Target
+# ================================
+X = dataset.iloc[:, 1:17]   # 16 feature columns
+Y = dataset.iloc[:, 0]      # Target (A–Z)
+
+
+# ================================
+# 4. Train-Test Split
+# ================================
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y, test_size=0.20, random_state=10
+)
+
+
+# ================================
+# 5. Feature Scaling
+# ================================
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# ================================
+# 6. Build Neural Network Model
+# ================================
+mlp = MLPClassifier(
+    hidden_layer_sizes=(128, 128, 64),  # Deep structure
+    activation='relu',
+    solver='adam',
+    max_iter=500,
+    random_state=10
+)
+
+
+# ================================
+# 7. Train Model
+# ================================
+mlp.fit(X_train, Y_train)
+
+
+# ================================
+# 8. Make Predictions
+# ================================
+predictions = mlp.predict(X_test)
+
+
+# ================================
+# 9. Evaluate Model
+# ================================
+print("\nAccuracy:", accuracy_score(Y_test, predictions))
+
+print("\nClassification Report:\n")
+print(classification_report(Y_test, predictions))
+
+
+# ================================
+# 10. Confusion Matrix Visualization
+# ================================
+classes = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+cm = ConfusionMatrix(mlp, classes=classes)
+
+cm.fit(X_train, Y_train)
+cm.score(X_test, Y_test)
+cm.show()
